@@ -157,6 +157,51 @@ export class Midiacode implements INodeType {
                     },
                 },
             },
+            {
+                displayName: 'Page Size',
+                name: 'pageSize',
+                type: 'number',
+                default: 10,
+                typeOptions: {
+                    minValue: 1,
+                    maxValue: 100,
+                },
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['list'],
+                    },
+                },
+                description: 'Number of items per page (1-100)',
+                routing: {
+                    send: {
+                        type: 'query',
+                        property: 'page_size',
+                    },
+                },
+            },
+            {
+                displayName: 'Page',
+                name: 'page',
+                type: 'number',
+                default: 1,
+                typeOptions: {
+                    minValue: 1,
+                },
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['list'],
+                    },
+                },
+                description: 'Page number to retrieve',
+                routing: {
+                    send: {
+                        type: 'query',
+                        property: 'page',
+                    },
+                },
+            },
         ],
     };
 }
