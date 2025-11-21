@@ -46,22 +46,97 @@ export class Midiacode implements INodeType {
                 name: 'operation',
                 type: 'options',
                 noDataExpression: true,
-                displayOptions: {
-                    show: {
-                        resource: ['content'],
-                    },
-                },
                 options: [
                     {
-                        name: 'List',
-                        value: 'list',
-                        description: 'List contents of a workspace',
-                        action: 'List contents',
+                        name: 'Search',
+                        value: 'search',
+                        description: 'Search contents of a workspace',
+                        action: 'Search contents',
+                        routing: {
+                            request: {
+                                method: 'GET',
+                                url: '=/public/workspace/{{$parameter.workspaceId}}/content',
+                            },
+                        },
+                    },
+                    {
+                        name: 'Create',
+                        value: 'create',
+                        description: 'Create a new content item',
+                        action: 'Create content',
+                        routing: {
+                            request: {
+                                method: 'POST',
+                                url: '/public/content/',
+                            },
+                        },
+                    },
+                    {
+                        name: 'Get',
+                        value: 'get',
+                        description: 'Get a specific content item',
+                        action: 'Get content',
+                        routing: {
+                            request: {
+                                method: 'GET',
+                                url: '=/public/content/{{$parameter.contentId}}/',
+                            },
+                        },
+                    },
+                    {
+                        name: 'Update',
+                        value: 'update',
+                        description: 'Update an existing content item',
+                        action: 'Update content',
+                        routing: {
+                            request: {
+                                method: 'PATCH',
+                                url: '=/public/content/{{$parameter.contentId}}/',
+                            },
+                        },
+                    },
+                    {
+                        name: 'Get Link',
+                        value: 'getLink',
+                        description: 'Get content link data',
+                        action: 'Get content link',
+                        routing: {
+                            request: {
+                                method: 'GET',
+                                url: '=/public/content/{{$parameter.contentId}}/link/',
+                            },
+                        },
+                    },
+                    {
+                        name: 'Update Link',
+                        value: 'updateLink',
+                        description: 'Update content link data',
+                        action: 'Update content link',
+                        routing: {
+                            request: {
+                                method: 'PATCH',
+                                url: '=/public/content/{{$parameter.contentId}}/link/',
+                            },
+                        },
+                    },
+                    {
+                        name: 'Publish',
+                        value: 'publish',
+                        description: 'Publish content',
+                        action: 'Publish content',
+                        routing: {
+                            request: {
+                                method: 'POST',
+                                url: '/public/content/publish/',
+                            },
+                        },
                     },
                 ],
-                default: 'list',
+                default: 'search',
             },
-            // Operation: List
+            // ----------------------------------
+            // Operation: Search
+            // ----------------------------------
             {
                 displayName: 'Workspace ID',
                 name: 'workspaceId',
@@ -71,16 +146,10 @@ export class Midiacode implements INodeType {
                 displayOptions: {
                     show: {
                         resource: ['content'],
-                        operation: ['list'],
+                        operation: ['search'],
                     },
                 },
                 description: 'The ID of the workspace',
-                routing: {
-                    request: {
-                        method: 'GET',
-                        url: '=/public/workspace/{{$parameter.workspaceId}}/content',
-                    },
-                },
             },
             {
                 displayName: 'Status',
@@ -109,13 +178,14 @@ export class Midiacode implements INodeType {
                 displayOptions: {
                     show: {
                         resource: ['content'],
-                        operation: ['list'],
+                        operation: ['search'],
                     },
                 },
                 routing: {
                     send: {
                         type: 'query',
                         property: 'status',
+                        value: '={{$value}}',
                     },
                 },
             },
@@ -127,7 +197,7 @@ export class Midiacode implements INodeType {
                 displayOptions: {
                     show: {
                         resource: ['content'],
-                        operation: ['list'],
+                        operation: ['search'],
                     },
                 },
                 description: 'Filter by content type',
@@ -146,7 +216,7 @@ export class Midiacode implements INodeType {
                 displayOptions: {
                     show: {
                         resource: ['content'],
-                        operation: ['list'],
+                        operation: ['search'],
                     },
                 },
                 description: 'Search term to filter contents',
@@ -161,18 +231,18 @@ export class Midiacode implements INodeType {
                 displayName: 'Page Size',
                 name: 'pageSize',
                 type: 'number',
-                default: 10,
+                default: 25,
                 typeOptions: {
                     minValue: 1,
-                    maxValue: 100,
+                    maxValue: 500,
                 },
                 displayOptions: {
                     show: {
                         resource: ['content'],
-                        operation: ['list'],
+                        operation: ['search'],
                     },
                 },
-                description: 'Number of items per page (1-100)',
+                description: 'Number of items per page (1-500)',
                 routing: {
                     send: {
                         type: 'query',
@@ -191,7 +261,7 @@ export class Midiacode implements INodeType {
                 displayOptions: {
                     show: {
                         resource: ['content'],
-                        operation: ['list'],
+                        operation: ['search'],
                     },
                 },
                 description: 'Page number to retrieve',
@@ -199,6 +269,329 @@ export class Midiacode implements INodeType {
                     send: {
                         type: 'query',
                         property: 'page',
+                    },
+                },
+            },
+
+            // ----------------------------------
+            // Operation: Create
+            // ----------------------------------
+            {
+                displayName: 'Title',
+                name: 'title',
+                type: 'string',
+                default: '',
+                required: true,
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['create'],
+                    },
+                },
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'title',
+                    },
+                },
+            },
+            {
+                displayName: 'Content Type Slug',
+                name: 'contentTypeSlug',
+                type: 'options',
+                options: [
+                    { name: 'Facebook', value: 'facebook' },
+                    { name: 'Instagram', value: 'instagram' },
+                    { name: 'LinkedIn', value: 'linkedin' },
+                    { name: 'MP3', value: 'mp3' },
+                    { name: 'Pinterest', value: 'pinterest' },
+                    { name: 'Podcast', value: 'podcast' },
+                    { name: 'Seppo', value: 'seppo' },
+                    { name: 'TikTok', value: 'tiktok' },
+                    { name: 'Twitter', value: 'twitter' },
+                    { name: 'URL', value: 'url' },
+                    { name: 'Video', value: 'video' },
+                    { name: 'WhatsApp', value: 'whatsapp' },
+                    { name: 'Xplabo', value: 'xplabo' },
+                    { name: 'YouTube', value: 'youtube' },
+                ],
+                default: 'url',
+                required: true,
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['create'],
+                    },
+                },
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'content_type_slug',
+                    },
+                },
+            },
+            {
+                displayName: 'Workspace ID',
+                name: 'workspaceIdBody',
+                type: 'string',
+                default: '',
+                required: true,
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['create'],
+                    },
+                },
+                description: 'The ID of the workspace',
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'workspace_id',
+                    },
+                },
+            },
+
+            // ----------------------------------
+            // Operation: Get, Update, Get Link, Update Link
+            // ----------------------------------
+            {
+                displayName: 'Content ID',
+                name: 'contentId',
+                type: 'string',
+                default: '',
+                required: true,
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['get', 'update', 'getLink', 'updateLink'],
+                    },
+                },
+                description: 'The ID of the content',
+            },
+
+            // ----------------------------------
+            // Operation: Publish
+            // ----------------------------------
+            {
+                displayName: 'Content ID',
+                name: 'contentIdPublish',
+                type: 'string',
+                default: '',
+                required: true,
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['publish'],
+                    },
+                },
+                description: 'The ID of the content to publish',
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'content_id',
+                    },
+                },
+            },
+            {
+                displayName: 'Workspace ID',
+                name: 'workspaceIdBody',
+                type: 'string',
+                default: '',
+                required: true,
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['publish'],
+                    },
+                },
+                description: 'The ID of the workspace',
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'workspace_id',
+                    },
+                },
+            },
+            {
+                displayName: 'Status',
+                name: 'statusPublish',
+                type: 'options',
+                options: [
+                    {
+                        name: 'Draft',
+                        value: 'dra',
+                    },
+                    {
+                        name: 'Published',
+                        value: 'pub',
+                    },
+                    {
+                        name: 'Archived',
+                        value: 'arc',
+                    },
+                ],
+                default: 'pub',
+                required: true,
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['publish'],
+                    },
+                },
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'status',
+                    },
+                },
+            },
+            {
+                displayName: 'Notification',
+                name: 'notification',
+                type: 'boolean',
+                default: true,
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['publish'],
+                    },
+                },
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'notification',
+                    },
+                },
+            },
+            {
+                displayName: 'Change Message',
+                name: 'changeMessage',
+                type: 'string',
+                default: '',
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['publish'],
+                    },
+                },
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'change_message',
+                    },
+                },
+            },
+
+            // ----------------------------------
+            // Operation: Update
+            // ----------------------------------
+            {
+                displayName: 'Title',
+                name: 'titleUpdate',
+                type: 'string',
+                default: '',
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['update'],
+                    },
+                },
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'title',
+                    },
+                },
+            },
+            {
+                displayName: 'Content Type Slug',
+                name: 'contentTypeSlugUpdate',
+                type: 'options',
+                options: [
+                    { name: 'Facebook', value: 'facebook' },
+                    { name: 'Instagram', value: 'instagram' },
+                    { name: 'LinkedIn', value: 'linkedin' },
+                    { name: 'MP3', value: 'mp3' },
+                    { name: 'Pinterest', value: 'pinterest' },
+                    { name: 'Podcast', value: 'podcast' },
+                    { name: 'Seppo', value: 'seppo' },
+                    { name: 'TikTok', value: 'tiktok' },
+                    { name: 'Twitter', value: 'twitter' },
+                    { name: 'URL', value: 'url' },
+                    { name: 'Video', value: 'video' },
+                    { name: 'WhatsApp', value: 'whatsapp' },
+                    { name: 'Xplabo', value: 'xplabo' },
+                    { name: 'YouTube', value: 'youtube' },
+                ],
+                default: 'url',
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['update'],
+                    },
+                },
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'content_type_slug',
+                    },
+                },
+            },
+
+            // ----------------------------------
+            // Operation: Update Link
+            // ----------------------------------
+            {
+                displayName: 'URL',
+                name: 'url',
+                type: 'string',
+                default: '',
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['updateLink'],
+                    },
+                },
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'url',
+                    },
+                },
+            },
+            {
+                displayName: 'Title',
+                name: 'titleUpdateLink',
+                type: 'string',
+                default: '',
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['updateLink'],
+                    },
+                },
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'title',
+                    },
+                },
+            },
+            {
+                displayName: 'Description',
+                name: 'description',
+                type: 'string',
+                default: '',
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['updateLink'],
+                    },
+                },
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'description',
                     },
                 },
             },
