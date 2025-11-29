@@ -39,6 +39,10 @@ export class Midiacode implements INodeType {
                         name: 'Content',
                         value: 'content',
                     },
+                    {
+                        name: 'Push Notification',
+                        value: 'pushNotification',
+                    },
                 ],
                 default: 'content',
             },
@@ -47,6 +51,11 @@ export class Midiacode implements INodeType {
                 name: 'operation',
                 type: 'options',
                 noDataExpression: true,
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                    },
+                },
                 options: [
                     {
                         name: 'Create',
@@ -134,6 +143,33 @@ export class Midiacode implements INodeType {
                     },
                 ],
                 default: 'create',
+            },
+            {
+                displayName: 'Operation',
+                name: 'operation',
+                type: 'options',
+                noDataExpression: true,
+                displayOptions: {
+                    show: {
+                        resource: ['pushNotification'],
+                    },
+                },
+                options: [
+                    {
+                        name: 'Send',
+                        value: 'send',
+                        description: 'Send a push notification',
+                        action: 'Send push notification',
+                        routing: {
+                            request: {
+                                method: 'POST',
+                                baseURL: 'https://account.midiacode.pt',
+                                url: '/public/push-notification/',
+                            },
+                        },
+                    },
+                ],
+                default: 'send',
             },
             // ----------------------------------
             // Operation: Search
@@ -731,6 +767,118 @@ export class Midiacode implements INodeType {
                     send: {
                         type: 'body',
                         property: 'version',
+                    },
+                },
+            },
+            // ----------------------------------
+            // Push Notification: Send
+            // ----------------------------------
+            {
+                displayName: 'Title',
+                name: 'notificationTitle',
+                type: 'string',
+                default: '',
+                required: true,
+                displayOptions: {
+                    show: {
+                        resource: ['pushNotification'],
+                        operation: ['send'],
+                    },
+                },
+                description: 'Push notification title',
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'title',
+                    },
+                },
+            },
+            {
+                displayName: 'Body',
+                name: 'notificationBody',
+                type: 'string',
+                typeOptions: {
+                    rows: 4,
+                },
+                default: '',
+                required: true,
+                displayOptions: {
+                    show: {
+                        resource: ['pushNotification'],
+                        operation: ['send'],
+                    },
+                },
+                description: 'Push notification body message',
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'body',
+                    },
+                },
+            },
+            {
+                displayName: 'Short Code',
+                name: 'shortCode',
+                type: 'string',
+                default: '',
+                required: true,
+                displayOptions: {
+                    show: {
+                        resource: ['pushNotification'],
+                        operation: ['send'],
+                    },
+                },
+                description: 'Content short code',
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'short_code',
+                    },
+                },
+            },
+            {
+                displayName: 'Destination Type',
+                name: 'destinationType',
+                type: 'options',
+                options: [
+                    {
+                        name: 'Users Email',
+                        value: 'users-email',
+                    },
+                ],
+                default: 'users-email',
+                required: true,
+                displayOptions: {
+                    show: {
+                        resource: ['pushNotification'],
+                        operation: ['send'],
+                    },
+                },
+                description: 'Type of destination for the notification',
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'destination_type',
+                    },
+                },
+            },
+            {
+                displayName: 'Users',
+                name: 'users',
+                type: 'string',
+                default: '',
+                displayOptions: {
+                    show: {
+                        resource: ['pushNotification'],
+                        operation: ['send'],
+                    },
+                },
+                description: 'Comma-separated list of email addresses (e.g., email1@example.com,email2@example.com). Leave empty to send to all users.',
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'users',
+                        value: '={{ $value ? $value.split(",").map(email => email.trim()) : [] }}',
                     },
                 },
             },
