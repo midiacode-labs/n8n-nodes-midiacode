@@ -68,6 +68,24 @@ You need to set up the `midiacodeApi` credential.
 
 Compatible with n8n@1.0.0 or later.
 
+## Testing
+
+This package includes comprehensive unit tests to ensure all operations work correctly.
+
+### Running Tests
+
+To run the test suite:
+
+```bash
+npm test
+```
+
+To run tests with coverage:
+
+```bash
+npm run test:coverage
+```
+
 ## Resources
 
 *   [n8n community nodes documentation](https://docs.n8n.io/integrations/#community-nodes)
