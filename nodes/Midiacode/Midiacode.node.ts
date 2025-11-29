@@ -173,12 +173,12 @@ export class Midiacode implements INodeType {
                         value: 'arc',
                     },
                 ],
-                default: '',
+                default: 'pub',
                 description: 'Filter by content status (leave as "All" to show all statuses)',
                 displayOptions: {
                     show: {
                         resource: ['content'],
-                        operation: ['search'],
+                        operation: ['search', 'publish'],
                     },
                 },
                 routing: {
@@ -285,7 +285,7 @@ export class Midiacode implements INodeType {
                 displayOptions: {
                     show: {
                         resource: ['content'],
-                        operation: ['create'],
+                        operation: ['create', 'update'],
                     },
                 },
                 routing: {
@@ -339,7 +339,7 @@ export class Midiacode implements INodeType {
                 displayOptions: {
                     show: {
                         resource: ['content'],
-                        operation: ['create'],
+                        operation: ['create', 'publish', 'update', 'updateLink'],
                     },
                 },
                 description: 'The ID of the workspace',
@@ -347,6 +347,96 @@ export class Midiacode implements INodeType {
                     send: {
                         type: 'body',
                         property: 'workspace_id',
+                    },
+                },
+            },
+            {
+                displayName: 'Priority',
+                name: 'priority',
+                type: 'number',
+                default: 1,
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['create', 'update'],
+                    },
+                },
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'priority',
+                    },
+                },
+            },
+            {
+                displayName: 'GS1 QR Code Enabled',
+                name: 'gs1QrCodeEnabled',
+                type: 'boolean',
+                default: false,
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['create', 'update'],
+                    },
+                },
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'gs1_qr_code_enabled',
+                    },
+                },
+            },
+            {
+                displayName: 'GS1 AI',
+                name: 'gs1Ai',
+                type: 'string',
+                default: '01',
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['create', 'update'],
+                    },
+                },
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'gs1_ai',
+                    },
+                },
+            },
+            {
+                displayName: 'Product EAN13',
+                name: 'productEan13',
+                type: 'string',
+                default: '',
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['create', 'update'],
+                    },
+                },
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'product_ean13',
+                    },
+                },
+            },
+            {
+                displayName: 'Product Variant',
+                name: 'productVariant',
+                type: 'string',
+                default: '',
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['create', 'update'],
+                    },
+                },
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'product_variant',
                     },
                 },
             },
@@ -363,7 +453,7 @@ export class Midiacode implements INodeType {
                 displayOptions: {
                     show: {
                         resource: ['content'],
-                        operation: ['get', 'update', 'getLink', 'updateLink'],
+                        operation: ['get', 'update', 'getLink', 'updateLink', 'publish'],
                     },
                 },
                 description: 'The ID of the content',
@@ -372,79 +462,6 @@ export class Midiacode implements INodeType {
             // ----------------------------------
             // Operation: Publish
             // ----------------------------------
-            {
-                displayName: 'Content ID',
-                name: 'contentIdPublish',
-                type: 'string',
-                default: '',
-                required: true,
-                displayOptions: {
-                    show: {
-                        resource: ['content'],
-                        operation: ['publish'],
-                    },
-                },
-                description: 'The ID of the content to publish',
-                routing: {
-                    send: {
-                        type: 'body',
-                        property: 'content_id',
-                    },
-                },
-            },
-            {
-                displayName: 'Workspace ID',
-                name: 'workspaceIdBody',
-                type: 'string',
-                default: '',
-                required: true,
-                displayOptions: {
-                    show: {
-                        resource: ['content'],
-                        operation: ['publish'],
-                    },
-                },
-                description: 'The ID of the workspace',
-                routing: {
-                    send: {
-                        type: 'body',
-                        property: 'workspace_id',
-                    },
-                },
-            },
-            {
-                displayName: 'Status',
-                name: 'statusPublish',
-                type: 'options',
-                options: [
-                    {
-                        name: 'Draft',
-                        value: 'dra',
-                    },
-                    {
-                        name: 'Published',
-                        value: 'pub',
-                    },
-                    {
-                        name: 'Archived',
-                        value: 'arc',
-                    },
-                ],
-                default: 'pub',
-                required: true,
-                displayOptions: {
-                    show: {
-                        resource: ['content'],
-                        operation: ['publish'],
-                    },
-                },
-                routing: {
-                    send: {
-                        type: 'body',
-                        property: 'status',
-                    },
-                },
-            },
             {
                 displayName: 'Notification',
                 name: 'notification',
@@ -483,62 +500,6 @@ export class Midiacode implements INodeType {
             },
 
             // ----------------------------------
-            // Operation: Update
-            // ----------------------------------
-            {
-                displayName: 'Title',
-                name: 'titleUpdate',
-                type: 'string',
-                default: '',
-                displayOptions: {
-                    show: {
-                        resource: ['content'],
-                        operation: ['update'],
-                    },
-                },
-                routing: {
-                    send: {
-                        type: 'body',
-                        property: 'title',
-                    },
-                },
-            },
-            {
-                displayName: 'Content Type Slug',
-                name: 'contentTypeSlugUpdate',
-                type: 'options',
-                options: [
-                    { name: 'Facebook', value: 'facebook' },
-                    { name: 'Instagram', value: 'instagram' },
-                    { name: 'LinkedIn', value: 'linkedin' },
-                    { name: 'MP3', value: 'mp3' },
-                    { name: 'Pinterest', value: 'pinterest' },
-                    { name: 'Podcast', value: 'podcast' },
-                    { name: 'Seppo', value: 'seppo' },
-                    { name: 'TikTok', value: 'tiktok' },
-                    { name: 'Twitter', value: 'twitter' },
-                    { name: 'URL', value: 'url' },
-                    { name: 'Video', value: 'video' },
-                    { name: 'WhatsApp', value: 'whatsapp' },
-                    { name: 'Xplabo', value: 'xplabo' },
-                    { name: 'YouTube', value: 'youtube' },
-                ],
-                default: 'url',
-                displayOptions: {
-                    show: {
-                        resource: ['content'],
-                        operation: ['update'],
-                    },
-                },
-                routing: {
-                    send: {
-                        type: 'body',
-                        property: 'content_type_slug',
-                    },
-                },
-            },
-
-            // ----------------------------------
             // Operation: Update Link
             // ----------------------------------
             {
@@ -555,25 +516,7 @@ export class Midiacode implements INodeType {
                 routing: {
                     send: {
                         type: 'body',
-                        property: 'url',
-                    },
-                },
-            },
-            {
-                displayName: 'Title',
-                name: 'titleUpdateLink',
-                type: 'string',
-                default: '',
-                displayOptions: {
-                    show: {
-                        resource: ['content'],
-                        operation: ['updateLink'],
-                    },
-                },
-                routing: {
-                    send: {
-                        type: 'body',
-                        property: 'title',
+                        property: 'link',
                     },
                 },
             },
