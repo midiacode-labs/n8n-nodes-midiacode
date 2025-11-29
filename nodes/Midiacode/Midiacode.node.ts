@@ -14,6 +14,7 @@ export class Midiacode implements INodeType {
         },
         inputs: ['main'],
         outputs: ['main'],
+        usableAsTool: true,
         credentials: [
             {
                 name: 'midiacodeApi',
@@ -48,18 +49,6 @@ export class Midiacode implements INodeType {
                 noDataExpression: true,
                 options: [
                     {
-                        name: 'Search',
-                        value: 'search',
-                        description: 'Search contents of a workspace',
-                        action: 'Search contents',
-                        routing: {
-                            request: {
-                                method: 'GET',
-                                url: '=/public/workspace/{{$parameter.workspaceId}}/content',
-                            },
-                        },
-                    },
-                    {
                         name: 'Create',
                         value: 'create',
                         description: 'Create a new content item',
@@ -84,18 +73,6 @@ export class Midiacode implements INodeType {
                         },
                     },
                     {
-                        name: 'Update',
-                        value: 'update',
-                        description: 'Update an existing content item',
-                        action: 'Update content',
-                        routing: {
-                            request: {
-                                method: 'PATCH',
-                                url: '=/public/content/{{$parameter.contentId}}/',
-                            },
-                        },
-                    },
-                    {
                         name: 'Get Link',
                         value: 'getLink',
                         description: 'Get content link data',
@@ -103,18 +80,6 @@ export class Midiacode implements INodeType {
                         routing: {
                             request: {
                                 method: 'GET',
-                                url: '=/public/content/{{$parameter.contentId}}/link/',
-                            },
-                        },
-                    },
-                    {
-                        name: 'Update Link',
-                        value: 'updateLink',
-                        description: 'Update content link data',
-                        action: 'Update content link',
-                        routing: {
-                            request: {
-                                method: 'PATCH',
                                 url: '=/public/content/{{$parameter.contentId}}/link/',
                             },
                         },
@@ -131,8 +96,44 @@ export class Midiacode implements INodeType {
                             },
                         },
                     },
+                    {
+                        name: 'Search',
+                        value: 'search',
+                        description: 'Search contents of a workspace',
+                        action: 'Search contents',
+                        routing: {
+                            request: {
+                                method: 'GET',
+                                url: '=/public/workspace/{{$parameter.workspaceId}}/content',
+                            },
+                        },
+                    },
+                    {
+                        name: 'Update',
+                        value: 'update',
+                        description: 'Update an existing content item',
+                        action: 'Update content',
+                        routing: {
+                            request: {
+                                method: 'PATCH',
+                                url: '=/public/content/{{$parameter.contentId}}/',
+                            },
+                        },
+                    },
+                    {
+                        name: 'Update Link',
+                        value: 'updateLink',
+                        description: 'Update content link data',
+                        action: 'Update content link',
+                        routing: {
+                            request: {
+                                method: 'PATCH',
+                                url: '=/public/content/{{$parameter.contentId}}/link/',
+                            },
+                        },
+                    },
                 ],
-                default: 'search',
+                default: 'create',
             },
             // ----------------------------------
             // Operation: Search

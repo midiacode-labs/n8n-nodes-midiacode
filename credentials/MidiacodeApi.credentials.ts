@@ -9,6 +9,7 @@ export class MidiacodeApi implements ICredentialType {
 	name = 'midiacodeApi';
 	displayName = 'Midiacode API';
 	documentationUrl = 'https://contentcore.midiacode.pt/docs/';
+	icon = 'file:midiacode.svg' as const;
 	properties: INodeProperties[] = [
 		{
 			displayName: 'API Key',

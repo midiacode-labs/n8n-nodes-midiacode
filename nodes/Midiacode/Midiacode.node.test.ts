@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Midiacode } from './Midiacode.node';
 import { INodeProperties } from 'n8n-workflow';
 
