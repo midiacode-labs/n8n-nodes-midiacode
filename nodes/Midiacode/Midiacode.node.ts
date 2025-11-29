@@ -538,6 +538,132 @@ export class Midiacode implements INodeType {
                     },
                 },
             },
+            {
+                displayName: 'Collectible',
+                name: 'collectible',
+                type: 'boolean',
+                default: true,
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['updateLink'],
+                    },
+                },
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'collectible',
+                    },
+                },
+            },
+            {
+                displayName: 'Embedded on App',
+                name: 'embeddedOnMobileApp',
+                type: 'boolean',
+                default: false,
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['updateLink'],
+                    },
+                },
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'embedded_on_mobile_app',
+                    },
+                },
+            },
+            {
+                displayName: 'Private',
+                name: 'private',
+                type: 'boolean',
+                default: false,
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['updateLink'],
+                    },
+                },
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'private',
+                    },
+                },
+            },
+            {
+                displayName: 'Recommended',
+                name: 'recommended',
+                type: 'boolean',
+                default: false,
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['updateLink'],
+                    },
+                },
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'recommended',
+                    },
+                },
+            },
+            {
+                displayName: 'Shareable',
+                name: 'shareable',
+                type: 'boolean',
+                default: true,
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['updateLink'],
+                    },
+                },
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'shareable',
+                    },
+                },
+            },
+            {
+                displayName: 'Skip Content Cover',
+                name: 'skipContentCover',
+                type: 'boolean',
+                default: false,
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['updateLink'],
+                    },
+                },
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'skip_content_cover',
+                    },
+                },
+            },
+            {
+                displayName: 'Version',
+                name: 'version',
+                type: 'string',
+                default: '1.0',
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['updateLink'],
+                    },
+                },
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'version',
+                    },
+                },
+            },
         ],
     };
 }
