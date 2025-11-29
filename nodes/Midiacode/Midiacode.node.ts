@@ -178,7 +178,7 @@ export class Midiacode implements INodeType {
                 displayOptions: {
                     show: {
                         resource: ['content'],
-                        operation: ['search', 'publish'],
+                        operation: ['search'],
                     },
                 },
                 routing: {
@@ -272,10 +272,6 @@ export class Midiacode implements INodeType {
                     },
                 },
             },
-
-            // ----------------------------------
-            // Operation: Create
-            // ----------------------------------
             {
                 displayName: 'Title',
                 name: 'title',
@@ -346,6 +342,26 @@ export class Midiacode implements INodeType {
                 routing: {
                     send: {
                         type: 'body',
+                        property: 'workspace_id',
+                    },
+                },
+            },
+            {
+                displayName: 'Workspace ID',
+                name: 'workspaceIdQuery',
+                type: 'string',
+                default: '',
+                required: true,
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['getLink', 'get'],
+                    },
+                },
+                description: 'The ID of the workspace',
+                routing: {
+                    send: {
+                        type: 'query',
                         property: 'workspace_id',
                     },
                 },
@@ -423,6 +439,39 @@ export class Midiacode implements INodeType {
                 },
             },
             {
+                displayName: 'Status',
+                name: 'statusPublish',
+                type: 'options',
+                options: [
+                    {
+                        name: 'Draft',
+                        value: 'dra',
+                    },
+                    {
+                        name: 'Published',
+                        value: 'pub',
+                    },
+                    {
+                        name: 'Archived',
+                        value: 'arc',
+                    },
+                ],
+                default: 'pub',
+                required: true,
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['publish'],
+                    },
+                },
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'status',
+                    },
+                },
+            },
+            {
                 displayName: 'Product Variant',
                 name: 'productVariant',
                 type: 'string',
@@ -453,7 +502,7 @@ export class Midiacode implements INodeType {
                 displayOptions: {
                     show: {
                         resource: ['content'],
-                        operation: ['get', 'update', 'getLink', 'updateLink', 'publish'],
+                        operation: ['get', 'update', 'getLink', 'updateLink'],
                     },
                 },
                 description: 'The ID of the content',
@@ -462,6 +511,26 @@ export class Midiacode implements INodeType {
             // ----------------------------------
             // Operation: Publish
             // ----------------------------------
+            {
+                displayName: 'Content ID',
+                name: 'contentIdPublish',
+                type: 'string',
+                default: '',
+                required: true,
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['publish'],
+                    },
+                },
+                description: 'The ID of the content to publish',
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'content_id',
+                    },
+                },
+            },
             {
                 displayName: 'Notification',
                 name: 'notification',
