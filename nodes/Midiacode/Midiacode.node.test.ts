@@ -35,8 +35,9 @@ describe('Midiacode Node', () => {
                 (p: INodeProperties) => p.name === 'resource',
             );
             expect(resourceProperty).toBeDefined();
-            expect(resourceProperty?.options).toHaveLength(1);
+            expect(resourceProperty?.options).toHaveLength(2);
             expect((resourceProperty?.options?.[0] as any)?.value).toBe('content');
+            expect((resourceProperty?.options?.[1] as any)?.value).toBe('pushNotification');
         });
     });
 

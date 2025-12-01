@@ -3,13 +3,13 @@
     "version": "0.1.0",
     "description": "n8n node for integrating with Midiacode content management API",
     "license": "MIT",
-    "homepage": "",
+    "homepage": "https://github.com/midiacode-labs/n8n-nodes-midiacode",
     "keywords": [
         "n8n-community-node-package"
     ],
     "author": {
         "name": "Luiz Gustavo Gavinho",
-        "email": "lgavinho@gmail.com"
+        "email": "lgavinho@midiacode.com"
     },
     "repository": {
         "type": "git",
