@@ -1,29 +1,31 @@
 {
     "name": "n8n-nodes-midiacode",
     "version": "0.1.0",
-    "description": "",
+    "description": "n8n node for integrating with Midiacode content management API",
     "license": "MIT",
-    "homepage": "",
+    "homepage": "https://github.com/midiacode-labs/n8n-nodes-midiacode",
     "keywords": [
         "n8n-community-node-package"
     ],
     "author": {
         "name": "Luiz Gustavo Gavinho",
-        "email": "lgavinho@gmail.com"
+        "email": "lgavinho@midiacode.com"
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/<...>/n8n-nodes-<...>.git"
+        "url": "https://github.com/midiacode-labs/n8n-nodes-midiacode.git"
     },
-   "scripts": {
-		"build": "n8n-node build",
-		"build:watch": "tsc --watch",
-		"dev": "n8n-node dev",
-		"lint": "n8n-node lint",
+    "scripts": {
+        "build": "n8n-node build",
+        "build:watch": "tsc --watch",
+        "dev": "n8n-node dev",
+        "lint": "n8n-node lint",
         "lint:fix": "n8n-node lint --fix",
-		"release": "n8n-node release",
-		"prepublishOnly": "n8n-node prerelease"
-	},
+        "release": "n8n-node release",
+        "prepublishOnly": "n8n-node prerelease",
+        "test": "jest",
+        "test:coverage": "jest --coverage"
+    },
     "files": [
         "dist"
     ],
@@ -31,18 +33,20 @@
         "n8nNodesApiVersion": 1,
         "strict": true,
         "credentials": [
-            "dist/credentials/GithubIssuesApi.credentials.js",
-            "dist/credentials/GithubIssuesOAuth2Api.credentials.js"
+            "dist/credentials/MidiacodeApi.credentials.js"
         ],
         "nodes": [
-            "dist/nodes/GithubIssues/GithubIssues.node.js"
+            "dist/nodes/Midiacode/Midiacode.node.js"
         ]
     },
     "devDependencies": {
         "@n8n/node-cli": "*",
+        "@types/jest": "^29.5.12",
         "eslint": "9.32.0",
+        "jest": "^29.7.0",
         "prettier": "3.6.2",
         "release-it": "^19.0.4",
+        "ts-jest": "^29.1.2",
         "typescript": "5.9.2"
     },
     "peerDependencies": {
