@@ -347,6 +347,7 @@ export class Midiacode implements INodeType {
                     { name: 'WhatsApp', value: 'whatsapp' },
                     { name: 'Xplabo', value: 'xplabo' },
                     { name: 'YouTube', value: 'youtube' },
+                    { name: 'Web based', value: 'web-based' },
                 ],
                 default: 'url',
                 required: true,
