@@ -4,6 +4,27 @@ This is an n8n community node. It lets you consume the Midiacode API in your n8n
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/) workflow automation platform.
 
+## Requirements
+
+This project requires **Node.js 22** or later.
+
+### Setting up Node.js version
+
+If you're using [nvm](https://github.com/nvm-sh/nvm), the project includes a `.nvmrc` file that specifies the recommended Node.js version:
+
+```bash
+# Install and use the recommended Node.js version
+nvm install
+nvm use
+```
+
+Or manually specify the version:
+
+```bash
+nvm install 22
+nvm use 22
+```
+
 ## Installation
 
 Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n community nodes documentation.
