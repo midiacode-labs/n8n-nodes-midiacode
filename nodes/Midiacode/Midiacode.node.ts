@@ -347,7 +347,7 @@ export class Midiacode implements INodeType {
                     { name: 'Web Based', value: 'web-based' },
                     { name: 'WhatsApp', value: 'whatsapp' },
                     { name: 'Xplabo', value: 'xplabo' },
-                    { name: 'YouTube', value: 'youtube' },
+                    { name: 'YouTube', value: 'youtube' },                    
                 ],
                 default: 'url',
                 required: true,
@@ -822,7 +822,6 @@ export class Midiacode implements INodeType {
                 name: 'shortCode',
                 type: 'string',
                 default: '',
-                required: true,
                 displayOptions: {
                     show: {
                         resource: ['pushNotification'],
