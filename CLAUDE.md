@@ -60,5 +60,5 @@ All display the same `displayName` to the user. When adding an operation, check 
 
 - Register new nodes/credentials in the `n8n` block of package.json, pointing at the compiled `dist/**/*.js` paths.
 - Gitflow: work branches off `develop`, releases via `release/*` into `main`. Feature branches: `feature/<name>`.
-- `CHANGELOG.md` (Keep a Changelog + SemVer) and the package.json `version` are updated together at release time; `npm run release` drives release-it.
+- `CHANGELOG.md` (Keep a Changelog + SemVer) and the package.json `version` are updated together at release time; `npm run release` (which runs `n8n-node release`) handles publishing.
 - `README.md` documents every operation and parameter for end users — update it when the node's surface changes.
