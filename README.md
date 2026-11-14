@@ -48,6 +48,11 @@ You need to set up the `midiacodeApi` credential.
 *   **Get Link**: Get content link data.
 *   **Update Link**: Update content link data.
 *   **Publish**: Publish content.
+*   **Set Cover**: Set the content cover from a public image URL. The image is resized to 730x354 and the content is left pending publication — run **Publish** afterwards.
+
+### Asset
+
+*   **Upload**: Upload an image (JPEG, PNG or WebP, up to 5 MB) from an input binary field and get its public URL.
 
 ## Parameters
 
@@ -84,6 +89,24 @@ You need to set up the `midiacodeApi` credential.
 *   **Status**: Status to publish (`Draft`, `Published`, `Archived`).
 *   **Notification**: Send notification (default: `true`).
 *   **Change Message**: Message describing the change.
+
+### Set Cover
+
+*   **Cover URL**: Public `https` URL of a JPEG, PNG or WebP image (up to 5 MB). The image is downloaded, resized to 730x354 (top kept on tall images, sides cropped on wide ones) and stored by Midiacode. Business card contents are not supported (their cover comes from the profile).
+
+Errors: `413` image too large, `415` unsupported format, `422` URL unreachable, not `https` or not public.
+
+### Upload Asset
+
+*   **Workspace ID**: The ID of the workspace.
+*   **Input Binary Field**: Name of the input binary field with the image (default: `data`).
+*   **Title**: Asset title (defaults to the file name).
+
+Returns `id`, `title`, `url`, `content_type`, `size` and `created_at`. The original image is kept (no resize).
+
+### Example: set a cover from a file
+
+`HTTP Request / Google Drive (binary)` → **Midiacode › Asset › Upload** → **Midiacode › Content › Set Cover** with Cover URL `{{ $json.url }}` → **Midiacode › Content › Publish**.
 
 ## Compatibility
 

@@ -1,5 +1,7 @@
 import { INodeType, INodeTypeDescription } from 'n8n-workflow';
 
+import { prepareAssetUpload } from './AssetUpload';
+
 export class Midiacode implements INodeType {
     description: INodeTypeDescription = {
         displayName: 'Midiacode',
@@ -35,6 +37,10 @@ export class Midiacode implements INodeType {
                 type: 'options',
                 noDataExpression: true,
                 options: [
+                    {
+                        name: 'Asset',
+                        value: 'asset',
+                    },
                     {
                         name: 'Content',
                         value: 'content',
@@ -118,6 +124,19 @@ export class Midiacode implements INodeType {
                         },
                     },
                     {
+                        name: 'Set Cover',
+                        value: 'setCover',
+                        description:
+                            'Set the content cover from a public image URL (resized to 730x354; publish afterwards)',
+                        action: 'Set content cover',
+                        routing: {
+                            request: {
+                                method: 'PUT',
+                                url: '=/public/content/{{$parameter.contentId}}/cover/',
+                            },
+                        },
+                    },
+                    {
                         name: 'Update',
                         value: 'update',
                         description: 'Update an existing content item',
@@ -170,6 +189,35 @@ export class Midiacode implements INodeType {
                     },
                 ],
                 default: 'send',
+            },
+            {
+                displayName: 'Operation',
+                name: 'operation',
+                type: 'options',
+                noDataExpression: true,
+                displayOptions: {
+                    show: {
+                        resource: ['asset'],
+                    },
+                },
+                options: [
+                    {
+                        name: 'Upload',
+                        value: 'upload',
+                        description: 'Upload an image (JPEG, PNG or WebP up to 5 MB) and get its public URL',
+                        action: 'Upload an image asset',
+                        routing: {
+                            request: {
+                                method: 'POST',
+                                url: '/public/asset/',
+                            },
+                            send: {
+                                preSend: [prepareAssetUpload],
+                            },
+                        },
+                    },
+                ],
+                default: 'upload',
             },
             // ----------------------------------
             // Operation: Search
@@ -373,7 +421,7 @@ export class Midiacode implements INodeType {
                 displayOptions: {
                     show: {
                         resource: ['content'],
-                        operation: ['create', 'publish', 'update', 'updateLink'],
+                        operation: ['create', 'publish', 'setCover', 'update', 'updateLink'],
                     },
                 },
                 description: 'The ID of the workspace',
@@ -540,7 +588,7 @@ export class Midiacode implements INodeType {
                 displayOptions: {
                     show: {
                         resource: ['content'],
-                        operation: ['get', 'update', 'getLink', 'updateLink'],
+                        operation: ['get', 'update', 'getLink', 'updateLink', 'setCover'],
                     },
                 },
                 description: 'The ID of the content',
@@ -770,6 +818,75 @@ export class Midiacode implements INodeType {
                         property: 'version',
                     },
                 },
+            },
+            // ----------------------------------
+            // Operation: Set Cover
+            // ----------------------------------
+            {
+                displayName: 'Cover URL',
+                name: 'coverUrl',
+                type: 'string',
+                default: '',
+                required: true,
+                placeholder: 'https://example.com/cover.jpg',
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['setCover'],
+                    },
+                },
+                description:
+                    'Public https URL of a JPEG, PNG or WebP image (up to 5 MB). Use the URL returned by Asset > Upload to send a file.',
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'cover_url',
+                    },
+                },
+            },
+            // ----------------------------------
+            // Asset: Upload
+            // ----------------------------------
+            {
+                displayName: 'Workspace ID',
+                name: 'workspaceIdAsset',
+                type: 'string',
+                default: '',
+                required: true,
+                displayOptions: {
+                    show: {
+                        resource: ['asset'],
+                        operation: ['upload'],
+                    },
+                },
+                description: 'The ID of the workspace',
+            },
+            {
+                displayName: 'Input Binary Field',
+                name: 'binaryPropertyName',
+                type: 'string',
+                default: 'data',
+                required: true,
+                displayOptions: {
+                    show: {
+                        resource: ['asset'],
+                        operation: ['upload'],
+                    },
+                },
+                hint: 'The name of the input binary field containing the image to upload',
+            },
+            {
+                displayName: 'Title',
+                name: 'assetTitle',
+                type: 'string',
+                default: '',
+                displayOptions: {
+                    show: {
+                        resource: ['asset'],
+                        operation: ['upload'],
+                    },
+                },
+                description: 'Asset title. Defaults to the file name.',
             },
             // ----------------------------------
             // Push Notification: Send
