@@ -112,6 +112,18 @@ export class Midiacode implements INodeType {
                         },
                     },
                     {
+                        name: 'Remove Geolocation',
+                        value: 'removeGeolocation',
+                        description: 'Remove the content geolocation (publish afterwards)',
+                        action: 'Remove content geolocation',
+                        routing: {
+                            request: {
+                                method: 'DELETE',
+                                url: '=/public/content/{{$parameter.contentId}}/geo/',
+                            },
+                        },
+                    },
+                    {
                         name: 'Search',
                         value: 'search',
                         description: 'Search contents of a workspace',
@@ -133,6 +145,19 @@ export class Midiacode implements INodeType {
                             request: {
                                 method: 'PUT',
                                 url: '=/public/content/{{$parameter.contentId}}/cover/',
+                            },
+                        },
+                    },
+                    {
+                        name: 'Set Geolocation',
+                        value: 'setGeolocation',
+                        description:
+                            'Publish the content only around a location, optionally between two dates (publish afterwards)',
+                        action: 'Set content geolocation',
+                        routing: {
+                            request: {
+                                method: 'PUT',
+                                url: '=/public/content/{{$parameter.contentId}}/geo/',
                             },
                         },
                     },
@@ -421,7 +446,14 @@ export class Midiacode implements INodeType {
                 displayOptions: {
                     show: {
                         resource: ['content'],
-                        operation: ['create', 'publish', 'setCover', 'update', 'updateLink'],
+                        operation: [
+                            'create',
+                            'publish',
+                            'setCover',
+                            'setGeolocation',
+                            'update',
+                            'updateLink',
+                        ],
                     },
                 },
                 description: 'The ID of the workspace',
@@ -441,7 +473,7 @@ export class Midiacode implements INodeType {
                 displayOptions: {
                     show: {
                         resource: ['content'],
-                        operation: ['getLink', 'get'],
+                        operation: ['getLink', 'get', 'removeGeolocation'],
                     },
                 },
                 description: 'The ID of the workspace',
@@ -588,7 +620,15 @@ export class Midiacode implements INodeType {
                 displayOptions: {
                     show: {
                         resource: ['content'],
-                        operation: ['get', 'update', 'getLink', 'updateLink', 'setCover'],
+                        operation: [
+                            'get',
+                            'update',
+                            'getLink',
+                            'updateLink',
+                            'setCover',
+                            'setGeolocation',
+                            'removeGeolocation',
+                        ],
                     },
                 },
                 description: 'The ID of the content',
@@ -841,6 +881,114 @@ export class Midiacode implements INodeType {
                     send: {
                         type: 'body',
                         property: 'cover_url',
+                    },
+                },
+            },
+            // ----------------------------------
+            // Operation: Set Geolocation
+            // ----------------------------------
+            {
+                displayName: 'Latitude',
+                name: 'latitude',
+                type: 'number',
+                default: 0,
+                required: true,
+                typeOptions: { minValue: -90, maxValue: 90, numberPrecision: 7 },
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['setGeolocation'],
+                    },
+                },
+                description: 'Latitude of the center, between -90 and 90 (not 0)',
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'lat',
+                    },
+                },
+            },
+            {
+                displayName: 'Longitude',
+                name: 'longitude',
+                type: 'number',
+                default: 0,
+                required: true,
+                typeOptions: { minValue: -180, maxValue: 180, numberPrecision: 7 },
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['setGeolocation'],
+                    },
+                },
+                description: 'Longitude of the center, between -180 and 180 (not 0)',
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'lng',
+                    },
+                },
+            },
+            {
+                displayName: 'Distance in Meters',
+                name: 'distance',
+                type: 'number',
+                default: 200,
+                required: true,
+                typeOptions: { minValue: 10, maxValue: 1000 },
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['setGeolocation'],
+                    },
+                },
+                description: 'Radius in meters around the center where the content is available',
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'distance',
+                    },
+                },
+            },
+            {
+                displayName: 'Start Date',
+                name: 'startDate',
+                type: 'dateTime',
+                default: '',
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['setGeolocation'],
+                    },
+                },
+                description: 'First day the content is available at the location. Leave empty to start on publish.',
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'start_date',
+                        // The API takes a calendar date (YYYY-MM-DD, workspace timezone).
+                        value: '={{ $value ? String($value).slice(0, 10) : undefined }}',
+                    },
+                },
+            },
+            {
+                displayName: 'End Date',
+                name: 'endDate',
+                type: 'dateTime',
+                default: '',
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['setGeolocation'],
+                    },
+                },
+                description: 'Last day the content is available at the location. Leave empty for no end.',
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'end_date',
+                        // The API takes a calendar date (YYYY-MM-DD, workspace timezone).
+                        value: '={{ $value ? String($value).slice(0, 10) : undefined }}',
                     },
                 },
             },

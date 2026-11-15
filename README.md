@@ -49,6 +49,8 @@ You need to set up the `midiacodeApi` credential.
 *   **Update Link**: Update content link data.
 *   **Publish**: Publish content.
 *   **Set Cover**: Set the content cover from a public image URL. The image is resized to 730x354 and the content is left pending publication — run **Publish** afterwards.
+*   **Set Geolocation**: Make the content available only around a location (geopublication), optionally between two dates. The content is left pending publication — run **Publish** afterwards.
+*   **Remove Geolocation**: Remove the content geolocation. Run **Publish** afterwards to apply it.
 
 ### Asset
 
@@ -95,6 +97,18 @@ You need to set up the `midiacodeApi` credential.
 *   **Cover URL**: Public `https` URL of a JPEG, PNG or WebP image (up to 5 MB). The image is downloaded, resized to 730x354 (top kept on tall images, sides cropped on wide ones) and stored by Midiacode. Business card contents are not supported (their cover comes from the profile).
 
 Errors: `413` image too large, `415` unsupported format, `422` URL unreachable, not `https` or not public.
+
+### Set Geolocation
+
+*   **Latitude** / **Longitude**: Center of the area (`-90..90` / `-180..180`; exactly `0` is rejected).
+*   **Distance in Meters**: Radius around the center, from 10 to 1000 meters (default `200`).
+*   **Start Date** / **End Date** (optional): Calendar days in the workspace timezone; only the date part is sent. An empty field clears the date; the end date cannot be in the past.
+
+Each call replaces the whole geolocation. Requires the `content-geolocation` feature in the workspace plan (`403` otherwise); `payment-order` and `order-receipt` contents are not supported (`400`).
+
+### Remove Geolocation
+
+*   **Content ID** and **Workspace ID**. Always allowed, whatever the plan; removing a geolocation that does not exist also succeeds.
 
 ### Upload Asset
 
