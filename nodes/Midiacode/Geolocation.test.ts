@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { INodeProperties } from 'n8n-workflow';
 
-import { Midiacode } from './Midiacode.node';
+import { CALENDAR_DATE_EXPRESSION, Midiacode } from './Midiacode.node';
 
 const properties = new Midiacode().description.properties;
 
@@ -53,15 +53,21 @@ describe('Set Geolocation', () => {
         expect(property?.required).toBeFalsy();
         expect(property?.type).toBe('dateTime');
         expect(property?.routing?.send?.property).toBe(bodyProperty);
-        expect(property?.routing?.send?.value).toBe(
-            '={{ $value ? String($value).slice(0, 10) : undefined }}',
-        );
+        expect(property?.routing?.send?.value).toBe(CALENDAR_DATE_EXPRESSION);
     });
 
     it('reuses content id (path) and workspace id (body)', () => {
         expect(findProperty('contentId', 'setGeolocation')).toBeDefined();
         expect(findProperty('workspaceIdBody', 'setGeolocation')?.routing?.send?.property).toBe(
             'workspace_id',
+        );
+    });
+});
+
+describe('CALENDAR_DATE_EXPRESSION', () => {
+    it('keeps only the date part of the n8n dateTime value', () => {
+        expect(CALENDAR_DATE_EXPRESSION).toBe(
+            '={{ $value ? String($value).slice(0, 10) : undefined }}',
         );
     });
 });

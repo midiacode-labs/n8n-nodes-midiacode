@@ -2,6 +2,9 @@ import { INodeType, INodeTypeDescription } from 'n8n-workflow';
 
 import { prepareAssetUpload } from './AssetUpload';
 
+// The geo API takes a calendar date (YYYY-MM-DD, workspace timezone); drop any time part.
+export const CALENDAR_DATE_EXPRESSION = '={{ $value ? String($value).slice(0, 10) : undefined }}';
+
 export class Midiacode implements INodeType {
     description: INodeTypeDescription = {
         displayName: 'Midiacode',
@@ -966,8 +969,7 @@ export class Midiacode implements INodeType {
                     send: {
                         type: 'body',
                         property: 'start_date',
-                        // The API takes a calendar date (YYYY-MM-DD, workspace timezone).
-                        value: '={{ $value ? String($value).slice(0, 10) : undefined }}',
+                        value: CALENDAR_DATE_EXPRESSION,
                     },
                 },
             },
@@ -987,8 +989,7 @@ export class Midiacode implements INodeType {
                     send: {
                         type: 'body',
                         property: 'end_date',
-                        // The API takes a calendar date (YYYY-MM-DD, workspace timezone).
-                        value: '={{ $value ? String($value).slice(0, 10) : undefined }}',
+                        value: CALENDAR_DATE_EXPRESSION,
                     },
                 },
             },
