@@ -1,5 +1,13 @@
 import { INodeType, INodeTypeDescription } from 'n8n-workflow';
 
+import { prepareAssetUpload } from './AssetUpload';
+
+// The geo API takes a calendar date (YYYY-MM-DD, workspace timezone); drop any time part.
+// $value is an ISO string from the picker, but an expression may yield a Luxon DateTime
+// (toISO keeps its own zone) or a JS Date (no zone, so UTC); String() would mangle a Date.
+export const CALENDAR_DATE_EXPRESSION =
+    "={{ $value ? (typeof $value === 'string' ? $value : $value.toISO ? $value.toISO() : $value.toISOString()).slice(0, 10) : undefined }}";
+
 export class Midiacode implements INodeType {
     description: INodeTypeDescription = {
         displayName: 'Midiacode',
@@ -35,6 +43,10 @@ export class Midiacode implements INodeType {
                 type: 'options',
                 noDataExpression: true,
                 options: [
+                    {
+                        name: 'Asset',
+                        value: 'asset',
+                    },
                     {
                         name: 'Content',
                         value: 'content',
@@ -106,6 +118,18 @@ export class Midiacode implements INodeType {
                         },
                     },
                     {
+                        name: 'Remove Geolocation',
+                        value: 'removeGeolocation',
+                        description: 'Remove the content geolocation (publish afterwards)',
+                        action: 'Remove content geolocation',
+                        routing: {
+                            request: {
+                                method: 'DELETE',
+                                url: '=/public/content/{{$parameter.contentId}}/geo/',
+                            },
+                        },
+                    },
+                    {
                         name: 'Search',
                         value: 'search',
                         description: 'Search contents of a workspace',
@@ -114,6 +138,32 @@ export class Midiacode implements INodeType {
                             request: {
                                 method: 'GET',
                                 url: '=/public/workspace/{{$parameter.workspaceId}}/content',
+                            },
+                        },
+                    },
+                    {
+                        name: 'Set Cover',
+                        value: 'setCover',
+                        description:
+                            'Set the content cover from a public image URL (resized to 730x354; publish afterwards)',
+                        action: 'Set content cover',
+                        routing: {
+                            request: {
+                                method: 'PUT',
+                                url: '=/public/content/{{$parameter.contentId}}/cover/',
+                            },
+                        },
+                    },
+                    {
+                        name: 'Set Geolocation',
+                        value: 'setGeolocation',
+                        description:
+                            'Publish the content only around a location, optionally between two dates (publish afterwards)',
+                        action: 'Set content geolocation',
+                        routing: {
+                            request: {
+                                method: 'PUT',
+                                url: '=/public/content/{{$parameter.contentId}}/geo/',
                             },
                         },
                     },
@@ -170,6 +220,35 @@ export class Midiacode implements INodeType {
                     },
                 ],
                 default: 'send',
+            },
+            {
+                displayName: 'Operation',
+                name: 'operation',
+                type: 'options',
+                noDataExpression: true,
+                displayOptions: {
+                    show: {
+                        resource: ['asset'],
+                    },
+                },
+                options: [
+                    {
+                        name: 'Upload',
+                        value: 'upload',
+                        description: 'Upload an image (JPEG, PNG or WebP up to 5 MB) and get its public URL',
+                        action: 'Upload an image asset',
+                        routing: {
+                            request: {
+                                method: 'POST',
+                                url: '/public/asset/',
+                            },
+                            send: {
+                                preSend: [prepareAssetUpload],
+                            },
+                        },
+                    },
+                ],
+                default: 'upload',
             },
             // ----------------------------------
             // Operation: Search
@@ -373,7 +452,14 @@ export class Midiacode implements INodeType {
                 displayOptions: {
                     show: {
                         resource: ['content'],
-                        operation: ['create', 'publish', 'update', 'updateLink'],
+                        operation: [
+                            'create',
+                            'publish',
+                            'setCover',
+                            'setGeolocation',
+                            'update',
+                            'updateLink',
+                        ],
                     },
                 },
                 description: 'The ID of the workspace',
@@ -393,7 +479,7 @@ export class Midiacode implements INodeType {
                 displayOptions: {
                     show: {
                         resource: ['content'],
-                        operation: ['getLink', 'get'],
+                        operation: ['getLink', 'get', 'removeGeolocation'],
                     },
                 },
                 description: 'The ID of the workspace',
@@ -540,7 +626,15 @@ export class Midiacode implements INodeType {
                 displayOptions: {
                     show: {
                         resource: ['content'],
-                        operation: ['get', 'update', 'getLink', 'updateLink'],
+                        operation: [
+                            'get',
+                            'update',
+                            'getLink',
+                            'updateLink',
+                            'setCover',
+                            'setGeolocation',
+                            'removeGeolocation',
+                        ],
                     },
                 },
                 description: 'The ID of the content',
@@ -770,6 +864,181 @@ export class Midiacode implements INodeType {
                         property: 'version',
                     },
                 },
+            },
+            // ----------------------------------
+            // Operation: Set Cover
+            // ----------------------------------
+            {
+                displayName: 'Cover URL',
+                name: 'coverUrl',
+                type: 'string',
+                default: '',
+                required: true,
+                placeholder: 'https://example.com/cover.jpg',
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['setCover'],
+                    },
+                },
+                description:
+                    'Public https URL of a JPEG, PNG or WebP image (up to 5 MB). Use the URL returned by Asset > Upload to send a file.',
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'cover_url',
+                    },
+                },
+            },
+            // ----------------------------------
+            // Operation: Set Geolocation
+            // ----------------------------------
+            {
+                displayName: 'Latitude',
+                name: 'latitude',
+                type: 'number',
+                default: '',
+                required: true,
+                typeOptions: { minValue: -90, maxValue: 90, numberPrecision: 7 },
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['setGeolocation'],
+                    },
+                },
+                description: 'Latitude of the center, between -90 and 90 (not 0)',
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'lat',
+                    },
+                },
+            },
+            {
+                displayName: 'Longitude',
+                name: 'longitude',
+                type: 'number',
+                default: '',
+                required: true,
+                typeOptions: { minValue: -180, maxValue: 180, numberPrecision: 7 },
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['setGeolocation'],
+                    },
+                },
+                description: 'Longitude of the center, between -180 and 180 (not 0)',
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'lng',
+                    },
+                },
+            },
+            {
+                displayName: 'Distance in Meters',
+                name: 'distance',
+                type: 'number',
+                default: 200,
+                required: true,
+                typeOptions: { minValue: 10, maxValue: 1000 },
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['setGeolocation'],
+                    },
+                },
+                description: 'Radius in meters around the center where the content is available',
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'distance',
+                    },
+                },
+            },
+            {
+                displayName: 'Start Date',
+                name: 'startDate',
+                type: 'dateTime',
+                default: '',
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['setGeolocation'],
+                    },
+                },
+                description: 'First day the content is available at the location. Leave empty to start on publish.',
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'start_date',
+                        value: CALENDAR_DATE_EXPRESSION,
+                    },
+                },
+            },
+            {
+                displayName: 'End Date',
+                name: 'endDate',
+                type: 'dateTime',
+                default: '',
+                displayOptions: {
+                    show: {
+                        resource: ['content'],
+                        operation: ['setGeolocation'],
+                    },
+                },
+                description: 'Last day the content is available at the location. Leave empty for no end.',
+                routing: {
+                    send: {
+                        type: 'body',
+                        property: 'end_date',
+                        value: CALENDAR_DATE_EXPRESSION,
+                    },
+                },
+            },
+            // ----------------------------------
+            // Asset: Upload
+            // ----------------------------------
+            {
+                displayName: 'Workspace ID',
+                name: 'workspaceIdAsset',
+                type: 'string',
+                default: '',
+                required: true,
+                displayOptions: {
+                    show: {
+                        resource: ['asset'],
+                        operation: ['upload'],
+                    },
+                },
+                description: 'The ID of the workspace',
+            },
+            {
+                displayName: 'Input Binary Field',
+                name: 'binaryPropertyName',
+                type: 'string',
+                default: 'data',
+                required: true,
+                displayOptions: {
+                    show: {
+                        resource: ['asset'],
+                        operation: ['upload'],
+                    },
+                },
+                hint: 'The name of the input binary field containing the image to upload',
+            },
+            {
+                displayName: 'Title',
+                name: 'assetTitle',
+                type: 'string',
+                default: '',
+                displayOptions: {
+                    show: {
+                        resource: ['asset'],
+                        operation: ['upload'],
+                    },
+                },
+                description: 'Asset title. Defaults to the file name.',
             },
             // ----------------------------------
             // Push Notification: Send

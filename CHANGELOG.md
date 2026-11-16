@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.2.0] - 2026-11-16
+
+### Added
+- Content Set Cover and Asset Upload operations
+- Content Set/Remove Geolocation operations
+
+### Fixed
+- Fall back to `application/octet-stream` when an asset has no mime type
+- Handle Date/DateTime in geolocation dates and empty start lat/lng
+
 ## [0.1.2] - 2026-07-17
 
 ### Fixed

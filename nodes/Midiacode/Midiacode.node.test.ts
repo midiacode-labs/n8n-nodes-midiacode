@@ -35,9 +35,11 @@ describe('Midiacode Node', () => {
                 (p: INodeProperties) => p.name === 'resource',
             );
             expect(resourceProperty).toBeDefined();
-            expect(resourceProperty?.options).toHaveLength(2);
-            expect((resourceProperty?.options?.[0] as any)?.value).toBe('content');
-            expect((resourceProperty?.options?.[1] as any)?.value).toBe('pushNotification');
+            expect(resourceProperty?.options).toHaveLength(3);
+            expect((resourceProperty?.options?.[0] as any)?.value).toBe('asset');
+            expect((resourceProperty?.options?.[1] as any)?.value).toBe('content');
+            expect((resourceProperty?.options?.[2] as any)?.value).toBe('pushNotification');
+            expect(resourceProperty?.default).toBe('content');
         });
     });
 
@@ -50,8 +52,18 @@ describe('Midiacode Node', () => {
             );
         });
 
-        it('should have 7 operations defined', () => {
-            expect(operationProperty?.options).toHaveLength(7);
+        it('should have 10 operations defined', () => {
+            expect(operationProperty?.options).toHaveLength(10);
+        });
+
+        it('should have set cover operation configured correctly', () => {
+            const setCoverOp = operationProperty?.options?.find(
+                (o: any) => o.value === 'setCover',
+            ) as any;
+            expect(setCoverOp?.routing?.request?.method).toBe('PUT');
+            expect(setCoverOp?.routing?.request?.url).toBe(
+                '=/public/content/{{$parameter.contentId}}/cover/',
+            );
         });
 
         it('should have search operation configured correctly', () => {
