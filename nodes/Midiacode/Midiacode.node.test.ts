@@ -52,8 +52,8 @@ describe('Midiacode Node', () => {
             );
         });
 
-        it('should have 8 operations defined', () => {
-            expect(operationProperty?.options).toHaveLength(8);
+        it('should have 10 operations defined', () => {
+            expect(operationProperty?.options).toHaveLength(10);
         });
 
         it('should have set cover operation configured correctly', () => {
