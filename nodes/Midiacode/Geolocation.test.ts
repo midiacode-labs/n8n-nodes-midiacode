@@ -39,6 +39,10 @@ describe('Set Geolocation', () => {
         expect(property?.routing?.send?.property).toBe(bodyProperty);
     });
 
+    it.each(['latitude', 'longitude'])('starts %s empty so 0 (rejected by the API) is never sent by default', (name) => {
+        expect(findProperty(name, 'setGeolocation')?.default).toBe('');
+    });
+
     it('limits the distance to 10-1000 m with a 200 m default', () => {
         const distance = findProperty('distance', 'setGeolocation');
         expect(distance?.default).toBe(200);
@@ -65,10 +69,22 @@ describe('Set Geolocation', () => {
 });
 
 describe('CALENDAR_DATE_EXPRESSION', () => {
-    it('keeps only the date part of the n8n dateTime value', () => {
-        expect(CALENDAR_DATE_EXPRESSION).toBe(
-            '={{ $value ? String($value).slice(0, 10) : undefined }}',
-        );
+    // Evaluates the JS inside ={{ }} directly; n8n's engine is not exercised.
+    const evaluate = (value: unknown) =>
+        new Function('$value', `return (${CALENDAR_DATE_EXPRESSION.slice(3, -2)});`)(value);
+
+    it.each([
+        ['an ISO string from the date picker', '2026-11-17T00:30:00', '2026-11-17'],
+        ['a plain calendar date', '2026-11-17', '2026-11-17'],
+        // Shape of a Luxon DateTime: toISO() keeps the DateTime's own zone.
+        ['a Luxon DateTime', { toISO: () => '2026-11-17T00:30:00.000+01:00' }, '2026-11-17'],
+        ['a JS Date (UTC)', new Date(Date.UTC(2026, 10, 17, 12)), '2026-11-17'],
+    ])('keeps only the date part of %s', (_label, value, expected) => {
+        expect(evaluate(value)).toBe(expected);
+    });
+
+    it('sends nothing for an empty field', () => {
+        expect(evaluate('')).toBeUndefined();
     });
 });
 

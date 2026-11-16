@@ -3,7 +3,10 @@ import { INodeType, INodeTypeDescription } from 'n8n-workflow';
 import { prepareAssetUpload } from './AssetUpload';
 
 // The geo API takes a calendar date (YYYY-MM-DD, workspace timezone); drop any time part.
-export const CALENDAR_DATE_EXPRESSION = '={{ $value ? String($value).slice(0, 10) : undefined }}';
+// $value is an ISO string from the picker, but an expression may yield a Luxon DateTime
+// (toISO keeps its own zone) or a JS Date (no zone, so UTC); String() would mangle a Date.
+export const CALENDAR_DATE_EXPRESSION =
+    "={{ $value ? (typeof $value === 'string' ? $value : $value.toISO ? $value.toISO() : $value.toISOString()).slice(0, 10) : undefined }}";
 
 export class Midiacode implements INodeType {
     description: INodeTypeDescription = {
@@ -894,7 +897,7 @@ export class Midiacode implements INodeType {
                 displayName: 'Latitude',
                 name: 'latitude',
                 type: 'number',
-                default: 0,
+                default: '',
                 required: true,
                 typeOptions: { minValue: -90, maxValue: 90, numberPrecision: 7 },
                 displayOptions: {
@@ -915,7 +918,7 @@ export class Midiacode implements INodeType {
                 displayName: 'Longitude',
                 name: 'longitude',
                 type: 'number',
-                default: 0,
+                default: '',
                 required: true,
                 typeOptions: { minValue: -180, maxValue: 180, numberPrecision: 7 },
                 displayOptions: {
