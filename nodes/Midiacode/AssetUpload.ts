@@ -53,7 +53,8 @@ export async function prepareAssetUpload(
     }
     const { body, contentType } = buildMultipartBody(fields, {
         fileName: binaryData.fileName ?? 'image',
-        mimeType: binaryData.mimeType,
+        // An empty mimeType would emit a malformed "Content-Type: " part header.
+        mimeType: binaryData.mimeType || 'application/octet-stream',
         data,
     });
 

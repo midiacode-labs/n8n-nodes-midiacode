@@ -81,11 +81,11 @@ describe('buildMultipartBody', () => {
 });
 
 describe('prepareAssetUpload', () => {
-    const makeContext = (params: Record<string, string>) =>
+    const makeContext = (params: Record<string, string>, mimeType = 'image/jpeg') =>
         ({
             getNodeParameter: jest.fn((name: string, fallback?: string) => params[name] ?? fallback),
             helpers: {
-                assertBinaryData: jest.fn(() => ({ fileName: 'photo.jpg', mimeType: 'image/jpeg' })),
+                assertBinaryData: jest.fn(() => ({ fileName: 'photo.jpg', mimeType })),
                 getBinaryDataBuffer: jest.fn(async () => Buffer.from('img')),
             },
         }) as any;
@@ -111,5 +111,15 @@ describe('prepareAssetUpload', () => {
         expect(text).not.toContain('name="title"');
         expect(text).toContain('filename="photo.jpg"');
         expect(text).toContain('Content-Type: image/jpeg');
+    });
+
+    it('falls back to application/octet-stream when the binary has no mime type', async () => {
+        const context = makeContext({ binaryPropertyName: 'data', workspaceIdAsset: 'ws-1' }, '');
+
+        const options = await prepareAssetUpload.call(context, { url: '/public/asset/' });
+
+        expect((options.body as Buffer).toString()).toContain(
+            'Content-Type: application/octet-stream\r\n',
+        );
     });
 });
