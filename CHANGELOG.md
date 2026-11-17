@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.2.1] - 2026-11-17
+
+### Added
+- GitHub Actions workflow publishing to npm via trusted publishing (OIDC) with provenance
+
+### Changed
+- Upgrade `@n8n/node-cli` to `^0.23.1` (required for provenance)
+
 ## [0.2.0] - 2026-11-16
 
 ### Added
